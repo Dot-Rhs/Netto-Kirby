@@ -104,13 +104,13 @@ async function gameSetup() {
   //   }
   // });
 
-  const pauseMenu = k.add([
-    k.rect(300, 400),
-    k.color(255, 255, 255),
-    k.outline(4),
-    k.anchor("center"),
-    k.pos(k.center().add(0, 700)),
-  ]);
+  // const pauseMenu = k.add([
+  //   k.rect(300, 400),
+  //   k.color(255, 255, 255),
+  //   k.outline(4),
+  //   k.anchor("center"),
+  //   k.pos(k.center().add(0, 700)),
+  // ]);
 
   k.go("level1");
 }
