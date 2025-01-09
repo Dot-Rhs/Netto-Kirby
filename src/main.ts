@@ -88,6 +88,9 @@ async function gameSetup() {
         case "p":
           paused = !paused;
           k.paused = !k.paused;
+
+          // HOW TO GET PARENT LAYER TO PAUSE???
+          // This works, but its dirty as fuck and breaks the animation.
           // k.get("*", { recursive: true })[0].parent.paused = true;
           console.log(
             "barry: ",
