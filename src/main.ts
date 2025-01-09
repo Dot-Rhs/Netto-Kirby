@@ -35,9 +35,11 @@ async function gameSetup() {
   k.scene("level1", () => {
     k.setGravity(2100);
     k.add([
+      k.timer(),
       k.rect(k.width(), k.height()),
       k.color(k.Color.fromHex("#f7d7db")),
       k.fixed(),
+      "test-bob",
     ]);
 
     k.add(level1Layout);
@@ -47,11 +49,12 @@ async function gameSetup() {
       level1SpawnPoints.Player[0].x,
       level1SpawnPoints.Player[0].y,
     );
-
+    let paused = false;
     setControls(k, kirb);
     k.add(kirb);
     k.camScale(k.vec2(0.7));
     k.onUpdate(() => {
+      if (paused) return;
       if (kirb.pos.x < level1Layout.pos.x + 432) {
         k.camPos(kirb.pos.x + 500, 850);
       }
@@ -77,40 +80,57 @@ async function gameSetup() {
         );
       });
     }
+
+    let curTween = null;
+
+    k.onKeyPress((key) => {
+      switch (key) {
+        case "p":
+          paused = !paused;
+          k.paused = !k.paused;
+          // k.get("*", { recursive: true })[0].parent.paused = true;
+          console.log(
+            "barry: ",
+            k.get("*", { recursive: true }),
+            // k.get("player")[0] as PlayerGameObj,
+          );
+
+          if (curTween) curTween.cancel();
+          curTween = k.tween(
+            pauseMenu.pos,
+            k.paused ? k.center() : k.center().add(0, 600),
+            1,
+            (p) => (pauseMenu.pos = p),
+            k.easings.easeOutElastic,
+          );
+          if (k.paused) {
+            pauseMenu.hidden = false;
+            pauseMenu.paused = true;
+            // k.get("*", { recursive: true })[0].parent.paused = true;
+            // k.debug.paused = true;
+          } else {
+            // k.debug.paused = false;
+            curTween.onEnd(() => {
+              pauseMenu.hidden = false;
+              pauseMenu.paused = true;
+            });
+            k.get("*", { recursive: true })[0].parent.paused = false;
+          }
+      }
+    });
+
+    const pauseMenu = k.add([
+      k.timer(),
+      k.rect(300, 400),
+      k.color(255, 255, 255),
+      k.outline(4),
+      k.anchor("center"),
+      k.pos(k.center().add(0, 600)),
+    ]);
+
+    pauseMenu.hidden = true;
+    pauseMenu.paused = true;
   });
-  // let curTween = null;
-  // addEventListener("keypress", (e: KeyboardEvent) => {
-  //   console.log("EVENT: ", e.code);
-  //   if (e.code == "KeyP") {
-  //     k.paused = !k.paused;
-
-  //     if (curTween) curTween.cancel();
-  //     curTween = k.tween(
-  //       pauseMenu.pos,
-  //       k.paused ? k.center() : k.center().add(0, 700),
-  //       1,
-  //       (p) => (pauseMenu.pos = p),
-  //       k.easings.easeOutElastic,
-  //     );
-  //     if (k.paused) {
-  //       pauseMenu.hidden = false;
-  //       pauseMenu.paused = false;
-  //     } else {
-  //       curTween.onEnd(() => {
-  //         pauseMenu.hidden = true;
-  //         pauseMenu.paused = true;
-  //       });
-  //     }
-  //   }
-  // });
-
-  // const pauseMenu = k.add([
-  //   k.rect(300, 400),
-  //   k.color(255, 255, 255),
-  //   k.outline(4),
-  //   k.anchor("center"),
-  //   k.pos(k.center().add(0, 700)),
-  // ]);
 
   k.go("level1");
 }
